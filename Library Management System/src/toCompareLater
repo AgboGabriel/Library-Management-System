@@ -1,0 +1,163 @@
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Scanner;
+
+import Exceptions.DuplicateMemberException;
+import Exceptions.ItemNotAvailable;
+import Model.*;
+
+public class Main {
+ private static boolean myOption=false;
+
+static Scanner scanner=new Scanner(System.in);
+    public static void main(String[] args) {
+
+       Library library=new Library();
+       LocalDate day=LocalDate.of(2026, 11, 30);
+       Book book1=new Book("1","That time I got reincarnated as a Slime",false,day,"Aniplex");
+       ArrayList<LibraryItem> list =new ArrayList<>();
+       list.add(book1);
+       Member member1=new Member("1", "Gabriel Agbo", list, 0.0);
+
+        
+        displayMenu();
+        int choice=scanner.nextInt();
+        Controller(choice);
+       System.out.println("\nEnter Y to Continue or N to stop\n");
+       char Option=scanner.next().toLowerCase().charAt(0);
+       
+        while( toContinue(Option)){
+              displayMenu();
+              choice=scanner.nextInt();
+              Controller(choice);
+              System.out.println("\nEnter Y to Continue or N to stop\n");
+             Option=scanner.next().toLowerCase().charAt(0);
+
+        }
+    }
+       
+        
+   
+ //Helper method for taking integer input from the user
+   
+    
+   static  boolean toContinue(char Option){
+         if(Option=='y'){
+            myOption=true;
+            
+        }
+        else if(Option=='n'){
+            myOption=false;
+        }
+        else{
+            System.out.println("\nPlease enter a valid option !!!!!!\n");
+            
+        }
+        return myOption;
+    }
+     public static void displayMenu(){
+        System.out.println("================================================================");
+            System.out.println("====================| LIBRARY MANAGEMENT SYSTEM |===============");
+            System.out.println("================================================================");
+            System.out.println("Press 1 to Add Item");
+            System.out.println("Press 2 to Remove Items");
+            System.out.println("Press 3 to Search items");
+            System.out.println("Press 4 to Register members");
+            System.out.println("Press 5 to View member's borrowed items");
+            System.out.println("Press 6 to Borrow Item");
+            System.out.println("Press 7 to Return Item");
+            System.out.println("Press 8 to List the available items");
+            System.out.println("Press 9 to List borrowed Items");
+            System.out.println("Press 10 to List Overdue items");
+            System.out.println("Press 11 to Pay Member fees");
+            System.out.println("Press 12 to List all items by title");
+  
+           
+
+    }
+    public static void Controller(int choice){
+         try {
+           
+            switch(choice){
+                case 1: 
+                    System.out.println("Adding Item ....");
+                    addItemToLibrary();
+                    System.out.println("Item Added");
+                  
+                    break;
+                case 2:
+
+                    System.out.println("Remove Items");
+                    break;
+                case 3:
+                    System.out.println("Search items");
+                    break;
+                case 4:
+                    System.out.println("Registering members: ");
+                    registeringMembers(member1);
+                    break;
+                case 5:
+                    System.out.println("Member's borrowed items: ");
+                    System.out.println(member1.getBorrowedItems());
+                    break;
+                case 6:
+                    System.out.println("Borrow Item");
+                    
+                    break;
+                case 7:
+                    
+                     System.out.println("Return Item");
+                     break;
+                case 8:
+                    System.out.println("available items: ");
+                    System.out.print(library.getAvailableItems());
+                  
+                    break;
+                case 9:
+                    System.out.println("List borrowed Items");
+                    break;
+                case 10: 
+                    System.out.println("List Overdue items");
+                    break;
+                case 11:
+                    System.out.println("Pay Member fees");
+                    break;
+                case 12:
+                    System.out.println("List all items by title");
+                    break;
+              
+                
+
+            }
+            
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+       
+    }
+    public static void addItemToLibrary() throws DuplicateMemberException{
+     
+        
+          try {
+            library.addItem(book1);
+        } catch (ItemNotAvailable e) {
+            System.out.println(e);
+        }
+    }
+
+
+    public static void registeringMembers(Member m) throws DuplicateMemberException{
+     
+        try {
+               library.registerMember(m);
+        } catch (DuplicateMemberException e) {
+            // TODO: handle exception
+            System.out.println(e);
+        }
+    }
+    
+   
+
+   
+}
