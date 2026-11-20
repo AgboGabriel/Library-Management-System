@@ -111,6 +111,15 @@ public class Library {
         item.setBorrowed(false);
         return chargeFee;
     }
+    //Paying For returnedItems Depending n whether the item was returned late or not
+    public void payingForItemsReturnedLate(String memberId, String itemId, double amount) throws MemberNotFoundException{
+     Member person=map.get(memberId);
+     if(person==null){
+        throw new MemberNotFoundException("Member with id: "+ memberId +" Not Found!");
+     }
+     person.payFees(amount);
+     System.out.println("Member with id: "+ memberId+ " Paying for item with id: "+ itemId);
+    }
 
     public ArrayList<LibraryItem> getAvailableItems() {
         ArrayList<LibraryItem> container= new ArrayList<>();
@@ -132,6 +141,10 @@ public class Library {
         return container;
     }
 
+    //Overdue Items are the Items that have not Yet been returned 
+    // to the library even though due date has reached
+    //today= The date you want to  compare to. Whether the item is due b4 the date you entered or not
+    //if so then it adds it to the arraylist(container) and returns the item as overdue.
     public ArrayList<LibraryItem> getOverdueItems(LocalDate today) throws NoDateException{
          ArrayList<LibraryItem> container=new ArrayList<>();
         for(LibraryItem item: list){

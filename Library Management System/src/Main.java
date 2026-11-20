@@ -15,15 +15,24 @@ import Model.*;
 
 public class Main {
  
-
-
+    /**
+     * @param args
+     * @throws ItemNotAvailable
+     * @throws ItemNotFoundException
+     * @throws MemberNotFoundException
+     * @throws MemberLimitExceededException
+     * @throws DuplicateMemberException
+     * @throws NoDateException
+     */
     public static void main(String[] args) throws ItemNotAvailable, ItemNotFoundException, MemberNotFoundException, MemberLimitExceededException, DuplicateMemberException, NoDateException {
         Scanner scanner=new Scanner(System.in);
         Library library= new Library();
+        LocalDate date;
         Member member=new Member(null, null);
         ArrayList<LibraryItem> list=new ArrayList<>();
+        boolean toContinue=true;
 
-        while(true){
+        while(toContinue){
             displayMenu(scanner);
             int choice=scanner.nextInt();
             scanner.nextLine();
@@ -55,16 +64,15 @@ public class Main {
             case 6:
                 String memberId=StringInputs(scanner, "Enter the Member ID: ");
                 String itemID=StringInputs(scanner," Enter the ItemID: ");
-                LocalDate date=LocalDate.now();
-                library.borrowItem(memberId,itemID, date);
-                System.out.println(" Borrowing Items Menu: ");
+                 date=readDate(scanner,"Enter the Date You Borrowed the Item in the Format YYYY-MM-DD");
+                borrowedItems(memberId, itemID, date, library);
+                System.out.println(" You have borrowed item with Id: " +itemID);
                 break;
             case 7:
                 itemID=StringInputs(scanner," Enter the ItemID: ");
                 memberId=StringInputs(scanner, "Enter the member's ID: ");
                 date=LocalDate.now();
-                System.out.println(library.returnItem(memberId, itemID, date));
-
+                System.out.println("$ "+ library.returnItem(memberId, itemID, date));
                 break;
             case 8:
                 System.out.println(" Below are the items in the library that are available(Have not been borrowed) ");
@@ -75,14 +83,18 @@ public class Main {
                 System.out.println(library.getBorrowedItems());
                 break;
             case 10:
+                // String date1=StringInputs(scanner, " Enter Date in Format YYYY-MM-DD: ");
+                System.out.println("Find items that are overdue relative to a specific date.");
+                date=readDate(scanner,"Enter reference date (YYYY-MM-DD): ");
                 System.out.println(" Below are the items in the library that are overdue ");
-                date=LocalDate.now();
                 System.out.println(library.getOverdueItems(date));
                 break;
             case 11:
+                itemID=StringInputs(scanner," Enter the ItemID: ");
+                memberId=StringInputs(scanner, "Enter the member's ID: ");
                 System.out.println(" Enter  amount you want to pay: ");
                 double amount= scanner.nextDouble();
-                member.payFees(amount);
+                library.payingForItemsReturnedLate(memberId, itemID, amount);
                 break;
             case 12:
                 System.out.println(" All items sorted by title ");
@@ -90,10 +102,15 @@ public class Main {
 
                 Collections.sort(list);
                 System.out.println(list);
-            default:
                 break;
+            case 0:
+                toContinue=false;
+                System.out.println("Exiting ....");
+                break;
+            default:
+                System.out.println("\nPLEASE ENTER A VALID OPTION WITHIN 0-12 !");
         }
-        }
+    }
           
         
        
@@ -118,6 +135,7 @@ public class Main {
         System.out.println("Press 10 to List Overdue Items");
         System.out.println("Press 11 to Pay member Fees");
         System.out.println("Press 12 to List all items sorted by title");
+        System.out.println("Press 0 to Exit");
 
       
     }
@@ -138,7 +156,8 @@ public class Main {
         member=new Member(memberId, name);
         return member;
     }
-    //
+
+
 
     //Method for taking user input to populate data structures
 
@@ -149,8 +168,9 @@ public class Main {
         return option;
     }
     //Reading Date
-    public static LocalDate readDate(Scanner scanner){
-           String date=StringInputs(scanner, " Enter Date in Format YYYY-MM-DD: ");
+    public static LocalDate readDate(Scanner scanner,String prompt){
+           System.out.println(prompt);
+           String date=scanner.nextLine();
            LocalDate correctDate= LocalDate.parse(date);
            return correctDate;
        
@@ -160,43 +180,68 @@ public class Main {
     public static String StringInputs(Scanner scanner,String prompt){
         System.out.println(prompt);
         String input=scanner.nextLine().trim();
+       
         
         return input;
     }
 
-    public void borrowedItems(Scanner scanner,String prompt) throws    ItemNotAvailable, MemberNotFoundException, MemberLimitExceededException, ItemNotFoundException{
-        Library library= new Library();
-        String memberId=StringInputs(scanner, " Enter the memberId ");
-        String itemId=StringInputs(scanner, " Enter the ItemId: ");
-        LocalDate date=readDate(scanner);
+    //borrowing Items and setting the duedate
+    public static void borrowedItems(String memberId, String itemId ,LocalDate date,Library library) throws    ItemNotAvailable, MemberNotFoundException, MemberLimitExceededException, ItemNotFoundException{
+        
+        // Library library= new Library();
+        // memberId=StringInputs(scanner, " Enter the memberId ");
+        // itemId=StringInputs(scanner, " Enter the ItemId: ");
+        // date=readDate(scanner," Enter the Date ");
 
         library.borrowItem(memberId, itemId, date);
-      
-    
+        
+
     }
 
     //Reading
     public static int readIntChoice(Scanner scanner,String prompt){
         System.out.println(prompt);
-        int option=scanner.nextInt();
-        scanner.nextLine();
-        return option;
+        
+        
+        while(true){
+           
+                if(scanner.hasNextInt()){
+                    int option=scanner.nextInt();
+                    scanner.nextLine();
+                    return option;
+                }else{
+                    System.out.println("Enter a valid integer!");
+                    scanner.nextLine();
+                }
+            
+        }
+        
     }
 
     //A helper method to populate the allow a user to create and populate the arraylist
   public static LibraryItem LibraryItemCreationHelper(Scanner scanner, String prompt){
+    boolean subMenuLoop=true;
       int choice=readIntChoice(scanner,"\nChoose which Library item you want \n"+
             "\n1. DVD \n"+
             "\n2. Book \n"+
             "\n3. Magazine\n" );
-    
+    while(subMenuLoop){
+        if(choice ==1 || choice ==2 || choice ==3){
+            subMenuLoop=false;
+            break;
+        }else{
+             System.out.println("\n Please enter a valid option between 1-3 ! \n");
+             choice= readIntChoice(scanner,"\nPlease choose again which Library item you want \n"+
+            "\n1. DVD \n"+
+            "\n2. Book \n"+
+            "\n3. Magazine\n" );
+            
+        }
+        
+    }
         String id=StringInputs(scanner, " Enter the Id: ");
         String title=StringInputs(scanner, " Enter the Title: ");
-        // boolean borrowed=readBoolean(scanner, " is item borrowed? true/false ");
-        // LocalDate date=readDate(scanner);
-       
-       
-      
+ 
         switch (choice) {
             case 1:
                 String director=StringInputs(scanner, " Enter the director's name: ");

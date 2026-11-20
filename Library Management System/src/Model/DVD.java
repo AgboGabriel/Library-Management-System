@@ -9,6 +9,7 @@ public class DVD extends LibraryItem{
         this.director=director;
     }
     @Override 
+    //This shows the amount of days user can borrow a specific book without paying late fee
     public int getLoanPeriodDays(){
         return 7;
     }

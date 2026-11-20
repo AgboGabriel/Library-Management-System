@@ -1,6 +1,7 @@
 package Model;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public abstract class LibraryItem implements Searchable,Comparable<LibraryItem>{
@@ -76,13 +77,15 @@ public abstract class LibraryItem implements Searchable,Comparable<LibraryItem>{
         // return 5 * getLoanPeriodDays();
     
     double calculateLateFee(LocalDate returndate){
-        int LoanPeriodDays=getLoanPeriodDays();
-        double dailyRate=getDailyLateFee();
-        if(LoanPeriodDays==0){
+        // int LoanPeriodDays=getLoanPeriodDays();
+        double dailyLate=getDailyLateFee();
+        Long DaysOverdue=dueDate.until(returndate, ChronoUnit.DAYS);
+        if(DaysOverdue==0){
             return 0;
         }
+    
         else{
-            return dailyRate*LoanPeriodDays;
+            return dailyLate*DaysOverdue;
         }
 
     }

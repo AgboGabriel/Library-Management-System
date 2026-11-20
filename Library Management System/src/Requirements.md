@@ -164,11 +164,11 @@ Choose an option:
 - All fields private, and encapsulation respected [2]
 - No duplicated logic. Shared behaviour lives in the abstract class. [2]
 - Sample data is loaded at startup so the program can be tested immediately (at least 3 books, 2 DVDs, 2 magazines, 2 members) [2]
-- Brief comments explaining *why*, not *what*, where the logic is not obvious [2]
+- Brief comments explaining *why*, not *what*, where the logic is not obvious [2].
 
 ---
 
-## Required Test Scenarios
+## Required Test Scenarios.
 
 Before you consider the project finished, make sure you can demonstrate each of these:
 

@@ -31,6 +31,8 @@ public class Member {
     public double getUnpaidFees(){
         return unpaidFees;
     }
+  
+   
     public void addToBorrowed(LibraryItem item){
         if(borrowedItems==null){
             borrowedItems=new ArrayList<>();
